@@ -1,0 +1,7 @@
+# Source masters are too large for git; only the encoded MP3s in audio/ are committed.
+*.wav
+*.WAV
+*.zip
+# Original full-size cover art (cleaned copies live in covers/)
+AlbumArt_*.jpeg
+.DS_Store

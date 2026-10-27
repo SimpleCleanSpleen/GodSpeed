@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en" data-theme="gold" class="no-anim">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Godspeed</title>
+  <meta name="description" content="Listen to and download Godspeed's albums, Higher Calling and Ø > U R.">
+  <meta property="og:title" content="Godspeed">
+  <meta property="og:description" content="Listen to and download Godspeed's albums.">
+  <meta property="og:image" content="covers/higher-calling.jpg">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@0,500;1,500;1,600&family=Inter:wght@400;500;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1 class="wordmark">God<span>s</span>peed</h1>
+    <nav class="album-switch" id="albumSwitch" aria-label="Albums"></nav>
+  </header>
+
+  <main id="main">
+    <section class="album" aria-live="polite">
+      <div class="cover-wrap">
+        <img id="cover" class="cover" alt="" width="600" height="600">
+      </div>
+      <div class="album-info">
+        <p class="eyebrow" id="albumMeta"></p>
+        <h2 id="albumTitle" class="album-title"></h2>
+        <p class="provisional" id="provisional" hidden>Track titles and order for this album are provisional.</p>
+        <div class="album-actions">
+          <button class="btn primary" id="playAlbum" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            Play album
+          </button>
+        </div>
+        <ol class="tracks" id="tracks"></ol>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; Godspeed. All songs free to stream and download.</p>
+  </footer>
+
+  <div class="player" id="player" hidden>
+    <img class="player-cover" id="playerCover" alt="" width="48" height="48">
+    <div class="player-meta">
+      <span class="player-title" id="playerTitle"></span>
+      <span class="player-album" id="playerAlbum"></span>
+    </div>
+    <div class="player-controls">
+      <button class="icon-btn" id="prevBtn" type="button" aria-label="Previous track">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+      </button>
+      <button class="icon-btn play" id="playBtn" type="button" aria-label="Play">
+        <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+        <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>
+      </button>
+      <button class="icon-btn" id="nextBtn" type="button" aria-label="Next track">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg>
+      </button>
+    </div>
+    <div class="player-progress">
+      <span class="time" id="curTime">0:00</span>
+      <input type="range" id="seek" min="0" max="1000" value="0" step="1" aria-label="Seek">
+      <span class="time" id="durTime">0:00</span>
+    </div>
+  </div>
+
+  <audio id="audio" preload="metadata"></audio>
+  <script src="app.js"></script>
+</body>
+</html>
