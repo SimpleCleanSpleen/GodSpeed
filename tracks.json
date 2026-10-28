@@ -6,9 +6,8 @@
       "title": "Higher Calling",
       "year": 2002,
       "label": "Bee Team Records",
-      "cover": "covers/higher-calling.jpg",
+      "cover": "covers/HigherCalling.jpg",
       "theme": "gold",
-      "provisional": false,
       "tracks": [
         { "title": "You're So Good to Me", "file": "youreSoGoodToMe", "length": "3:24" },
         { "title": "In Your Image", "file": "inYourImage", "length": "3:39" },
@@ -31,19 +30,20 @@
       "label": null,
       "cover": "covers/o-greater-than-u-r.jpg",
       "theme": "blue",
-      "provisional": true,
-      "_note": "PROVISIONAL: track titles and order below were guessed from the WAV file names. Edit the \"title\" values or reorder the lines freely; \"file\" must match the MP3 name in audio/ (without .mp3). Set \"provisional\" to false once confirmed to hide the notice on the site.",
+      "credits": [
+        "Cover artwork: Greg Smith"
+      ],
       "tracks": [
-        { "title": "Reign", "file": "reign", "length": "3:27" },
-        { "title": "I Know", "file": "iKnow", "length": "3:14" },
-        { "title": "Between Here and Heaven", "file": "betweenHereAndHeaven", "length": "3:05" },
-        { "title": "Jesus I Lift My Hands", "file": "jesusILiftMyHands", "length": "5:59" },
-        { "title": "Your Love 2", "file": "yourLove2", "length": "3:00" },
-        { "title": "Thank You Father", "file": "thankYouFather", "length": "5:24" },
-        { "title": "I Know You Listen", "file": "iKnowYouListen", "length": "3:24" },
-        { "title": "Nothing Greater Than You Are", "file": "nothingGreaterThanYouAre", "length": "4:21" },
+        { "title": "I Can't Stop", "file": "iCantStop", "length": "2:57" },
         { "title": "Blessed Be My Rock", "file": "blessedBeMyRock", "length": "2:23" },
-        { "title": "I Can't Stop", "file": "iCantStop", "length": "2:57" }
+        { "title": "Nothing Greater Than You Are", "file": "nothingGreaterThanYouAre", "length": "4:21" },
+        { "title": "I Know You Listen", "file": "iKnowYouListen", "length": "3:24" },
+        { "title": "Thank You Father", "file": "thankYouFather", "length": "5:24" },
+        { "title": "Your Love #2", "file": "yourLove2", "length": "3:00" },
+        { "title": "Jesus, I Lift My Hands", "file": "jesusILiftMyHands", "length": "5:59" },
+        { "title": "Between Here And Heaven (Owen's Song)", "file": "betweenHereAndHeaven", "length": "3:05" },
+        { "title": "I Know", "file": "iKnow", "length": "3:14" },
+        { "title": "Reign", "file": "reign", "length": "3:27" }
       ]
     }
   ]
