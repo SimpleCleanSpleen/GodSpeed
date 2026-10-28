@@ -6,7 +6,7 @@ Static site for the Christian band Godspeed. Stream and download both albums: *H
 
 All album and track info lives in [`tracks.json`](tracks.json). To rename a song, change its `"title"`. To reorder songs, move its line. Each `"file"` must match an MP3 in `audio/` (without the `.mp3`).
 
-The track titles and order for **Ø > U R** are provisional, guessed from the file names. Once they're confirmed, set `"provisional": false` and the notice on the site goes away.
+The track titles and order for **Ø > U R** are confirmed from the CD liner notes.
 
 ## Re-encoding audio
 
