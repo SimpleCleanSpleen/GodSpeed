@@ -22,7 +22,11 @@
   };
   const src = (t) => `audio/${t.file}.mp3`;
   const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
-  const safeName = (s) => s.replace(/[\\/:*?"<>|]/g, "").trim();
+  const safeName = (s) => s.replace(/:/g, "-").replace(/[\\/*?"<>|]/g, "").replace(/\s+/g, " ").trim();
+  const pad = (n) => String(n).padStart(2, "0");
+  // ASCII file names for zips: some browsers and older unzip tools mangle "Ø" etc.
+  const asciiName = (s) => safeName(s.replace(/Ø/g, "O").replace(/ø/g, "o")
+    .normalize("NFKD").replace(/[^\x20-\x7e]/g, ""));
 
   async function init() {
     data = await (await fetch("tracks.json", { cache: "no-cache" })).json();
@@ -60,7 +64,8 @@
     $("cover").alt = `${a.title} album cover`;
     $("albumTitle").textContent = a.title;
     $("albumMeta").textContent = [data.artist, a.year, a.label].filter(Boolean).join(" · ");
-    $("provisional").hidden = !a.provisional;
+    $("credits").textContent = (a.credits || []).join(" · ");
+    $("credits").hidden = !a.credits?.length;
 
     $("tracks").innerHTML = a.tracks.map((t, n) => `
       <li class="track" data-n="${n}">
@@ -91,6 +96,105 @@
   });
 
   $("playAlbum").addEventListener("click", () => play(viewIndex, 0));
+
+  // Zips are built in the browser from the MP3s and tracks.json, so they always
+  // match the current track order and titles and never need rebuilding.
+  const albumEntries = (a, dir) => a.tracks.map((t, n) => ({
+    name: `${dir}/${pad(n + 1)} - ${asciiName(t.title)}.mp3`, url: src(t) }));
+
+  $("downloadAlbum").addEventListener("click", (e) => {
+    const a = data.albums[viewIndex];
+    const name = asciiName(`${data.artist} - ${a.title}`);
+    downloadZip(e.currentTarget, `${name}.zip`, albumEntries(a, name));
+  });
+
+  $("downloadAll").addEventListener("click", (e) => {
+    const root = asciiName(data.artist);
+    const entries = data.albums.flatMap((a) => albumEntries(a, `${root}/${asciiName(a.title)}`));
+    downloadZip(e.currentTarget, `${root} - All Songs.zip`, entries);
+  });
+
+  async function downloadZip(btn, filename, entries) {
+    if (btn.disabled) return;
+    const label = btn.querySelector("span") || btn;
+    const text = label.textContent;
+    btn.disabled = true;
+    try {
+      const files = [];
+      for (const [i, f] of entries.entries()) {
+        label.textContent = `Preparing ${i + 1} of ${entries.length}…`;
+        const res = await fetch(f.url);
+        if (!res.ok) throw new Error(`${f.url}: ${res.status}`);
+        files.push({ name: f.name, data: new Uint8Array(await res.arrayBuffer()) });
+      }
+      const url = URL.createObjectURL(zip(files));
+      const link = Object.assign(document.createElement("a"), { href: url, download: filename });
+      document.body.append(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+      label.textContent = text;
+    } catch (err) {
+      console.error(err);
+      label.textContent = "Download failed. Tap to retry.";
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  const CRC_TABLE = Array.from({ length: 256 }, (_, n) => {
+    for (let k = 0; k < 8; k++) n = n & 1 ? 0xedb88320 ^ (n >>> 1) : n >>> 1;
+    return n >>> 0;
+  });
+  const crc32 = (buf) => {
+    let c = 0xffffffff;
+    for (let i = 0; i < buf.length; i++) c = CRC_TABLE[(c ^ buf[i]) & 0xff] ^ (c >>> 8);
+    return (c ^ 0xffffffff) >>> 0;
+  };
+
+  // Minimal stored (uncompressed) zip; MP3s don't compress anyway.
+  function zip(files) {
+    const enc = new TextEncoder();
+    const d = new Date();
+    const time = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1);
+    const date = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
+    const header = (sig, size) => {
+      const v = new DataView(new ArrayBuffer(size));
+      v.setUint32(0, sig, true);
+      return v;
+    };
+    const parts = [], central = [];
+    let offset = 0;
+    for (const f of files) {
+      const name = enc.encode(f.name);
+      const crc = crc32(f.data);
+      const local = header(0x04034b50, 30);
+      // version 2.0, UTF-8 names, stored
+      [[4, 20], [6, 0x0800], [8, 0], [10, time], [12, date]].forEach(([o, x]) => local.setUint16(o, x, true));
+      local.setUint32(14, crc, true);
+      local.setUint32(18, f.data.length, true);
+      local.setUint32(22, f.data.length, true);
+      local.setUint16(26, name.length, true);
+      parts.push(local, name, f.data);
+
+      const cd = header(0x02014b50, 46);
+      [[4, 20], [6, 20], [8, 0x0800], [10, 0], [12, time], [14, date]].forEach(([o, x]) => cd.setUint16(o, x, true));
+      cd.setUint32(16, crc, true);
+      cd.setUint32(20, f.data.length, true);
+      cd.setUint32(24, f.data.length, true);
+      cd.setUint16(28, name.length, true);
+      cd.setUint32(42, offset, true);
+      central.push(cd, name);
+      offset += 30 + name.length + f.data.length;
+    }
+    const cdSize = central.reduce((s, p) => s + p.byteLength, 0);
+    const end = header(0x06054b50, 22);
+    end.setUint16(8, files.length, true);
+    end.setUint16(10, files.length, true);
+    end.setUint32(12, cdSize, true);
+    end.setUint32(16, offset, true);
+    return new Blob([...parts, ...central, end], { type: "application/zip" });
+  }
 
   function play(albumIdx, n) {
     const a = data.albums[albumIdx];

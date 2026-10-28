@@ -7,7 +7,7 @@
   <meta name="description" content="Listen to and download Godspeed's albums, Higher Calling and Ø > U R.">
   <meta property="og:title" content="Godspeed">
   <meta property="og:description" content="Listen to and download Godspeed's albums.">
-  <meta property="og:image" content="covers/higher-calling.jpg">
+  <meta property="og:image" content="covers/HigherCalling.jpg">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,20 +28,25 @@
       <div class="album-info">
         <p class="eyebrow" id="albumMeta"></p>
         <h2 id="albumTitle" class="album-title"></h2>
-        <p class="provisional" id="provisional" hidden>Track titles and order for this album are provisional.</p>
         <div class="album-actions">
           <button class="btn primary" id="playAlbum" type="button">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
             Play album
           </button>
+          <button class="btn" id="downloadAlbum" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4h2v9.2l3.3-3.3 1.4 1.4L12 17l-5.7-5.7 1.4-1.4 3.3 3.3zM5 19h14v2H5z"/></svg>
+            <span>Download album</span>
+          </button>
         </div>
         <ol class="tracks" id="tracks"></ol>
+        <p class="credits" id="credits" hidden></p>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
     <p>&copy; Godspeed. All songs free to stream and download.</p>
+    <button class="link-btn" id="downloadAll" type="button">Download every song from both albums (.zip)</button>
   </footer>
 
   <div class="player" id="player" hidden>
